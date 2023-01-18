@@ -32,7 +32,7 @@ public class Purchase {
     private Long count;
 
     @Column(name = "amount")
-    private Long amount;
+    private Float amount;
 
     @Column(name = "purchasedate")
     private String purchaseDate;
@@ -40,7 +40,7 @@ public class Purchase {
     public Purchase() {
     }
 
-    public Purchase(Long id, String name, String lastname, Long age, String purchaseItem, Long count, Long amount, String purchaseDate) {
+    public Purchase(Long id, String name, String lastname, Long age, String purchaseItem, Long count, Float amount, String purchaseDate) {
         this.id = id;
         this.name = name;
         this.lastname = lastname;
@@ -75,7 +75,7 @@ public class Purchase {
         return count;
     }
 
-    public Long getAmount() {
+    public Float getAmount() {
         return amount;
     }
 
