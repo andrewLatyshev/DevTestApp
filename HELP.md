@@ -1,0 +1,25 @@
+# Getting Started
+
+### Reference Documentation
+
+For further reference, please consider the following sections:
+
+* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
+* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.7.5/maven-plugin/reference/html/)
+* [Create an OCI image](https://docs.spring.io/spring-boot/docs/2.7.5/maven-plugin/reference/html/#build-image)
+
+Для работы приложения требуется запущенный сервер PostgreSQL, имя пользователя и пароль для доступа к базе данных (БД) - postgres/postgres. 
+В случае имеющейся БД с другими именем пользователя/паролем необходимо изменить значения в полях spring.datasource.username и spring.datasource.password в файле проекта application.properties.
+
+После запуска приложения необходимо выполнить скрипт для добавления тестовых данных в БД для чего необходимо перейти в файл testData.sql и нажать "Execute".
+
+Доступ к работе приложения происходит по URL http://localhost:8080/login, где будет предложено аутентификация пользователя, 
+для тестовой проверки приложения использовать имя пользователя - admin, пароль - admin. После аутентификации будет предложена ссылка
+для перехода на "главную страницу", где представлена таблица отчетов о покупках. 
+
+Приложения позволяет добавлять новые отчеты, для чего необходимо перейти на вкладку "Добавить отчет" и ввести данные в соответствующие поля, после чего нажать кнопку "Create".
+Примечание - количество товаров в дробном представлении не допускается.
+
+Выше таблицы с отчетами о покупках представлены ссылки для формирования отчетов в соответствии с требованиями, 
+названия соответствуют пунктам ТЗ.
+
