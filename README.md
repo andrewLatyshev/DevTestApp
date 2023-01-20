@@ -1,11 +1,4 @@
-# DevTestApp
-Getting Started
-Reference Documentation
-For further reference, please consider the following sections:
 
-Official Apache Maven documentation
-Spring Boot Maven Plugin Reference Guide
-Create an OCI image
 Для работы приложения требуется запущенный сервер PostgreSQL, имя пользователя и пароль для доступа к базе данных (БД) - postgres/postgres. В случае имеющейся БД с другими именем пользователя/паролем необходимо изменить значения в полях spring.datasource.username и spring.datasource.password в файле проекта application.properties.
 
 После запуска приложения необходимо выполнить скрипт для добавления тестовых данных в БД для чего необходимо перейти в файл testData.sql и нажать "Execute".
