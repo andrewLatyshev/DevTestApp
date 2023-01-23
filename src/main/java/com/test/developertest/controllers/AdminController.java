@@ -4,16 +4,19 @@ package com.test.developertest.controllers;
 import com.test.developertest.models.Purchase;
 import com.test.developertest.service.ProductService;
 import com.test.developertest.service.PurchaseService;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping(value = "/", produces = {MediaType.APPLICATION_XML_VALUE})
 public class AdminController {
 
     private final PurchaseService purchaseService;
@@ -24,16 +27,24 @@ public class AdminController {
         this.productService = productService;
     }
 
-    @GetMapping("index")
+    @GetMapping("index" )
 	public String showAllUsers(Model model) {
-		model.addAttribute("purchases", purchaseService.getAllPurchases());
+        try {
+            model.addAttribute("purchases", purchaseService.getAllPurchases());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-		return "/adminPage";
+        return "/adminPage";
 	}
 
     @GetMapping("week-report")
     public String reportOfWeek(Model model) {
-        List<Purchase> purchases = purchaseService.getAllPurchases();
+        try {
+            List<Purchase> purchases = purchaseService.getAllPurchases();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         model.addAttribute("weekReport", purchaseService.bestSellsOfWeek());
         model.addAttribute("product", productService.getProductList());
         return "/week_report";

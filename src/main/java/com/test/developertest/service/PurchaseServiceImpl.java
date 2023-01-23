@@ -1,14 +1,19 @@
 package com.test.developertest.service;
 
-import com.test.developertest.dao.DaoProduct;
 import com.test.developertest.dao.DaoPurchase;
 import com.test.developertest.models.Purchase;
+import org.springframework.http.HttpInputMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -16,20 +21,23 @@ import java.util.stream.Collectors;
 public class PurchaseServiceImpl implements PurchaseService {
 
     private final DaoPurchase daoPurchase;
-    private final DaoProduct daoProduct;
+    private PurchaseConverter purchaseConverter;
 
-    public PurchaseServiceImpl(DaoPurchase daoPurchase, DaoProduct daoProduct) {
+    public PurchaseServiceImpl(DaoPurchase daoPurchase, PurchaseConverter purchaseConverter) {
         this.daoPurchase = daoPurchase;
-        this.daoProduct = daoProduct;
+        this.purchaseConverter = purchaseConverter;
     }
 
     @Override
-    public List<Purchase> getAllPurchases() {
+    public List<Purchase> getAllPurchases() throws IOException {
+//        HttpInputMessage inputMessage = null;
+//        purchaseConverter.readInternal(Purchase.class, inputMessage);
         return daoPurchase.getAllPurchases();
     }
 
     @Override
     public Purchase showPurchase(Long id) {
+//        purchaseConverter.readInternal(daoPurchase.showPurchase(id), )
         return daoPurchase.showPurchase(id);
     }
 

@@ -1,0 +1,68 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.my.com"
+           xmlns:m="http://www.my.com"
+           elementFormDefault="qualified">
+
+
+    <xs:element name="request">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>Запрос на спискок покупок</xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element name="purchaseName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="customer" type="m:сustomer" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="purchaseList" type="m:purchase" maxOccurs="unbounded"/>
+                <xs:element name="date" type="xs:date" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="response">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>Ответ на запрос списка покупок</xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element name="response" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="сustomer">
+        <xs:annotation>
+            <xs:documentation>Покупатель</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" minOccurs="1"/>
+            <xs:element name="lastname" type="xs:string" minOccurs="1"/>
+            <xs:element name="age" type="xs:int" minOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="purchase">
+        <xs:annotation>
+            <xs:documentation>Покупка</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="name" type="m:productName" minOccurs="1"/>
+            <xs:element name="count" type="xs:int" minOccurs="1"/>
+            <xs:element name="cost" type="xs:float" minOccurs="1"/>
+            <xs:element name="date" type="xs:date"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:simpleType name="productName">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Телевизор"/>
+            <xs:enumeration value="Смартфон"/>
+            <xs:enumeration value="Соковыжималка"/>
+            <xs:enumeration value="Наушники"/>
+            <xs:enumeration value="Клавиатура"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+
+</xs:schema>

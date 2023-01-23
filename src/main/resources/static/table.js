@@ -1,11 +1,15 @@
+const xml2js = require('xml2js');
+
 const userAddFormId = $('#addFormNewPurchase');
 const deleteFormId = $('#modalDelete');
 const userTableId = $('#userTable');
 
+
+
 function insertUser() {
 
     let headers = new Headers();
-    headers.append('Content-Type', 'application/json; charset=utf-8');
+    headers.append('Content-Type', 'application/xml; charset=utf-8');
 
     let purchase = {
         'name': userAddFormId.find('#name').val(),
@@ -22,7 +26,7 @@ function insertUser() {
     let request = new Request('/api/addPurchase', {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify(purchase)
+        body: XMLSource.stringify(purchase)
     });
 
     fetch(request)
@@ -36,10 +40,14 @@ function insertUser() {
 
 }
 
+// var parser = new DOMParser();
+// var xmlDoc = parser.parseFromString()
+
 function getAllUsers() {
     userTableId.children('#purchaseTableBody').empty();
     fetch('api/index').then(function (response) {
         if (response.ok) {
+
             response.json().then(purchases => {
                 purchases.forEach(purchase => {
                     newRow(purchase);
@@ -219,7 +227,7 @@ $('#newPurchaseLink').click(() => {
     fetch('/api/products').then(function (response) {
         if (response.ok) {
             userAddFormId.find('#newpurchaseItem').empty();
-            response.json()
+            response.text()
                 .then(productList => {
                 productList.forEach(product => {
                     userAddFormId.find('#newpurchaseItem')

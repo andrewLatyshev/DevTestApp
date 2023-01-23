@@ -2,6 +2,7 @@ package com.test.developertest.models;
 
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@XmlRootElement
 @Table(name = "purchases")
 public class Purchase {
     @Id
