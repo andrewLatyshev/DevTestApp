@@ -1,8 +1,7 @@
 package com.test.developertest.service;
 
-import com.test.developertest.dao.DaoProduct;
 import com.test.developertest.models.Product;
-import com.test.developertest.service.ProductService;
+import com.test.developertest.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,20 +9,20 @@ import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final DaoProduct daoProduct;
+    private final ProductRepository productRepository;
 
-    public ProductServiceImpl(DaoProduct daoProduct) {
-        this.daoProduct = daoProduct;
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Override
     public List<Product> getProductList() {
-        return daoProduct.getProductList();
+        return productRepository.findAll();
     }
 
     @Override
     public Product getProduct(Long id) {
-        return daoProduct.getProduct(id);
+        return productRepository.getById(id);
     }
 
 }
