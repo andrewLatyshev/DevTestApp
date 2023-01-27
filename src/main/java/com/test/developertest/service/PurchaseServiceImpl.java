@@ -5,13 +5,14 @@ import com.test.developertest.repository.PurchaseRepository;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
 import javax.persistence.EntityManager;
 import javax.xml.bind.JAXBException;
-import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -22,13 +23,16 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final EntityManager entityManager;
     private final PurchaseConverter purchaseConverter;
 
+    private final FileStorageService fileStorageService;
+
     static final Logger LOGGER = LogManager.getLogger();
 
 
-    public PurchaseServiceImpl(PurchaseRepository purchaseRepository, EntityManager entityManager, PurchaseConverter purchaseConverter) {
+    public PurchaseServiceImpl(PurchaseRepository purchaseRepository, EntityManager entityManager, PurchaseConverter purchaseConverter, FileStorageService fileStorageService) {
         this.purchaseRepository = purchaseRepository;
         this.entityManager = entityManager;
         this.purchaseConverter = purchaseConverter;
+        this.fileStorageService = fileStorageService;
     }
 
     @Override
@@ -46,10 +50,10 @@ public class PurchaseServiceImpl implements PurchaseService {
         try {
             purchaseConverter.writeInternal(purchaseRepository.getById(id));
             LOGGER.log(Level.INFO, "Файл успешно представлен пользователю");
+            return purchaseRepository.getById(id);
         } catch (JAXBException e) {
             throw new RuntimeException(e + "Произошла ошибка при запросе покупки из БД");
         }
-        return purchaseRepository.getById(id);
     }
 
 
@@ -68,9 +72,10 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Transactional
     @Override
-    public void addPurchaseFromFile(File file){
+    public void addPurchaseFromFile(Resource file) throws IOException {
+
         try {
-            purchaseRepository.save(purchaseConverter.readInternal(file));
+            purchaseRepository.save(purchaseConverter.readInternal(file.getFile()));
             LOGGER.log(Level.INFO, "Покупка успешно добавлена в БД");
         } catch (JAXBException e) {
             throw new RuntimeException(e + "Произошла ошибка при добавлении покупки в БД, неверный формат в файле");

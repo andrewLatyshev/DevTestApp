@@ -1,15 +1,14 @@
 package com.test.developertest.controllers;
 
 
-import com.test.developertest.models.FilesStorage;
 import com.test.developertest.models.Product;
 import com.test.developertest.models.Purchase;
 import com.test.developertest.service.FileStorageService;
+import com.test.developertest.service.FileStorageServiceImpl;
 import com.test.developertest.service.ProductService;
 import com.test.developertest.service.PurchaseService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -88,10 +87,10 @@ public class ClientController {
     }
 
     @PostMapping(value = "/addPurchase", consumes = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<Purchase> createPurchaseForm(@RequestBody Purchase purchase) {
+    public ResponseEntity<Purchase> createPurchaseToFile(@RequestBody Purchase purchase) {
         try {
 
-            purchaseService.addPurchase(purchase);
+            purchaseService.addPurchaseFromFile(storageService.loadFileAsResource("input.xml"));
             return new ResponseEntity<>(purchase, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

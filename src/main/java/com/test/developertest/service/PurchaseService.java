@@ -1,6 +1,7 @@
 package com.test.developertest.service;
 
 import com.test.developertest.models.Purchase;
+import org.springframework.core.io.Resource;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
@@ -21,7 +22,7 @@ public interface PurchaseService {
 
     public Purchase parsePurchaseToFile(Long id);
 
-    public void addPurchaseFromFile(File file) throws JAXBException, SAXException;
+    public void addPurchaseFromFile(Resource file) throws JAXBException, SAXException, IOException;
 
     void editPurchase(Purchase purchase);
 
