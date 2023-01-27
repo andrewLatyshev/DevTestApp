@@ -3,6 +3,7 @@ package com.test.developertest.controllers;
 
 import com.test.developertest.models.Purchase;
 import com.test.developertest.service.ProductService;
+import com.test.developertest.service.PurchaseConverter;
 import com.test.developertest.service.PurchaseService;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -21,10 +22,12 @@ public class AdminController {
 
     private final PurchaseService purchaseService;
     private final ProductService productService;
+    private final PurchaseConverter purchaseConverter;
 
-    public AdminController(PurchaseService purchaseService, ProductService productService) {
+    public AdminController(PurchaseService purchaseService, ProductService productService, PurchaseConverter purchaseConverter) {
         this.purchaseService = purchaseService;
         this.productService = productService;
+        this.purchaseConverter = purchaseConverter;
     }
 
     @GetMapping("index" )

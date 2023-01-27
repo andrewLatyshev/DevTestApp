@@ -10,16 +10,11 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "item_name")
     private String name;
 
 
-
     public Product() {
-    }
-
-    public Product(String name) {
-        this.name = name;
     }
 
     public Long getId() {

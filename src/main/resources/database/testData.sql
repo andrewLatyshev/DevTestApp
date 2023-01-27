@@ -12,10 +12,15 @@
 
     CREATE TABLE if not exists public.items (
                                                     id serial not null ,
-                                                    name varchar(20),
+                                                    item_name varchar(20),
                                                     primary key (id)
     );
 
+    INSERT INTO public.items (item_name) VALUES ('Телевизор');
+    INSERT INTO public.items (item_name) VALUES ('Смартфон');
+    INSERT INTO public.items (item_name) VALUES ('Соковыжималка');
+    INSERT INTO public.items (item_name) VALUES ('Наушники');
+    INSERT INTO public.items (item_name) VALUES ('Клавиатура');
 
     INSERT INTO public.purchases (age, name, purchaseitem, lastname, count, amount, purchasedate) VALUES (33, 'Клиент1', 'Телевизор', 'ФИО1', 2, 30000, '2023-01-24');
     INSERT INTO public.purchases (age, name, purchaseitem, lastname, count, amount, purchasedate) VALUES (33, 'Клиент1', 'Наушники', 'ФИО1', 6, 20000, '2022-11-22');
@@ -39,8 +44,3 @@
     INSERT INTO public.purchases (age, name, purchaseitem, lastname, count, amount, purchasedate) VALUES ( 33, 'Клиент7', 'Телевизор', 'ФИО7', 1, 30000, '2023-01-20');
 
 
-    INSERT INTO public.items (name) VALUES ('Телевизор');
-    INSERT INTO public.items (name) VALUES ('Смартфон');
-    INSERT INTO public.items (name) VALUES ('Соковыжималка');
-    INSERT INTO public.items (name) VALUES ('Наушники');
-    INSERT INTO public.items (name) VALUES ('Клавиатура');

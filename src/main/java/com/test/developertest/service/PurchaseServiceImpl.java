@@ -2,15 +2,17 @@ package com.test.developertest.service;
 
 import com.test.developertest.models.Purchase;
 import com.test.developertest.repository.PurchaseRepository;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.xml.sax.SAXException;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.HashMap;
+import javax.xml.bind.JAXBException;
+import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 
 @Service
@@ -18,10 +20,15 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     private final PurchaseRepository purchaseRepository;
     private final EntityManager entityManager;
+    private final PurchaseConverter purchaseConverter;
 
-    public PurchaseServiceImpl(PurchaseRepository purchaseRepository, EntityManager entityManager) {
+    static final Logger LOGGER = LogManager.getLogger();
+
+
+    public PurchaseServiceImpl(PurchaseRepository purchaseRepository, EntityManager entityManager, PurchaseConverter purchaseConverter) {
         this.purchaseRepository = purchaseRepository;
         this.entityManager = entityManager;
+        this.purchaseConverter = purchaseConverter;
     }
 
     @Override
@@ -34,6 +41,19 @@ public class PurchaseServiceImpl implements PurchaseService {
         return purchaseRepository.getById(id);
     }
 
+    @Override
+    public Purchase parsePurchaseToFile(Long id) {
+        try {
+            purchaseConverter.writeInternal(purchaseRepository.getById(id));
+            LOGGER.log(Level.INFO, "Файл успешно представлен пользователю");
+        } catch (JAXBException e) {
+            throw new RuntimeException(e + "Произошла ошибка при запросе покупки из БД");
+        }
+        return purchaseRepository.getById(id);
+    }
+
+
+
     @Transactional
     @Override
     public void deletePurchase(Long id) {
@@ -44,6 +64,19 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public void addPurchase(Purchase purchase) {
         entityManager.createNamedQuery("createPurchase", Purchase.class);
+    }
+
+    @Transactional
+    @Override
+    public void addPurchaseFromFile(File file){
+        try {
+            purchaseRepository.save(purchaseConverter.readInternal(file));
+            LOGGER.log(Level.INFO, "Покупка успешно добавлена в БД");
+        } catch (JAXBException e) {
+            throw new RuntimeException(e + "Произошла ошибка при добавлении покупки в БД, неверный формат в файле");
+        } catch (SAXException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Transactional

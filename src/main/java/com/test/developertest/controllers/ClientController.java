@@ -1,12 +1,16 @@
 package com.test.developertest.controllers;
 
 
-import com.sun.xml.txw2.annotation.XmlAttribute;
+import com.test.developertest.models.FilesStorage;
 import com.test.developertest.models.Product;
 import com.test.developertest.models.Purchase;
+import com.test.developertest.service.FileStorageService;
 import com.test.developertest.service.ProductService;
-import com.test.developertest.service.PurchaseConverter;
 import com.test.developertest.service.PurchaseService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,25 +25,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 
 
 @RestController
 @Validated
-@RequestMapping(value = "/api", produces = {MediaType.APPLICATION_XML_VALUE})
+@RequestMapping(value = "/api")
 public class ClientController {
 
-    PurchaseService purchaseService;
+    private final PurchaseService purchaseService;
 
     private final ProductService productService;
 
-    private PurchaseConverter purchaseConverter;
+    private final FileStorageService storageService;
 
-    public ClientController(PurchaseService purchaseService, ProductService productService) {
+    static final Logger LOGGER = LogManager.getLogger();
+
+    public ClientController(PurchaseService purchaseService, ProductService productService, FileStorageService filesStorage) {
         this.purchaseService = purchaseService;
         this.productService = productService;
+        this.storageService = filesStorage;
     }
-    @GetMapping(value = "/index")
+    @GetMapping(value = "/index", produces = {MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<List<Purchase>> showAllPurchases() {
         try {
             return new ResponseEntity<>(purchaseService.getAllPurchases(), HttpStatus.OK);
@@ -48,8 +58,8 @@ public class ClientController {
         }
     }
 
-    @GetMapping(value = "aboutThisPurchase/{id}")
-    public ResponseEntity<Purchase> showThisPurchase(@PathVariable Long id) {
+    @GetMapping(value = "aboutThisPurchase/{id}", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<Purchase> parsePurchaseToFile(@PathVariable Long id) {
         try {
         Purchase purchase = purchaseService.showPurchase(id);
         return new ResponseEntity<>(purchase, HttpStatus.OK);
@@ -59,9 +69,28 @@ public class ClientController {
     }
 
 
-    @PostMapping(value = "/addPurchase")
+    @GetMapping("/downloadFile/{fileName:.+}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
+        Resource resource = storageService.loadFileAsResource(fileName);
+        String contentType = null;
+        try {
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException ex) {
+            LOGGER.info("Could not determine file type.");
+        }
+        if(contentType == null) {
+            contentType = "application/octet-stream";
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
+
+    @PostMapping(value = "/addPurchase", consumes = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<Purchase> createPurchaseForm(@RequestBody Purchase purchase) {
         try {
+
             purchaseService.addPurchase(purchase);
             return new ResponseEntity<>(purchase, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -80,7 +109,7 @@ public class ClientController {
         }
     }
 
-    @PutMapping(value = "update")
+    @PutMapping(value = "update", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<Purchase> updatePurchase(@RequestBody Purchase purchase) {
         try {
             purchaseService.editPurchase(purchase);
@@ -90,7 +119,7 @@ public class ClientController {
         }
     }
 
-    @GetMapping("/products")
+    @GetMapping(value = "/products", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<List<Product>> showAllProducts() {
         try {
             HttpHeaders responseHeaders = new HttpHeaders();

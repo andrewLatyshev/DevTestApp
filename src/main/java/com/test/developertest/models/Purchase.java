@@ -1,30 +1,39 @@
 package com.test.developertest.models;
 
 
+import com.test.developertest.service.DateAdapter;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
-@XmlRootElement
+@XmlRootElement(name = "purchase")
+@XmlType(propOrder = {"id", "name", "lastname", "age", "count", "amount", "purchasedate", "purchaseitem"})
 @Table(name = "purchases")
 @NamedQueries({@NamedQuery(name = "showAllPurchases", query = "select p from Purchase p"),
                @NamedQuery(name = "deletePurchase", query = "delete from Purchase where id = :id"),
                })
-@NamedNativeQueries({@NamedNativeQuery(name = "createPurchase", query = "insert into purchases (name, lastname, age, purchaseitem, count, amount, purchasedate) "
-                            + "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)"),
+@NamedNativeQueries({@NamedNativeQuery(name = "createPurchase", query = "insert into purchases (name, lastname, age,  count, amount, purchasedate, purchaseitem) "
+                             + "VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)"),
               @NamedNativeQuery(name = "reportForWeek", query = "select * "
-                                                            + "from purchases where current_date - purchasedate < 7 "),
+                             + "from purchases where current_date - purchasedate < 7 "),
               @NamedNativeQuery(name = "goodOfMonth", query = "select purchaseitem, sum(count) as purchase_count  from purchases "
                              + "where current_date - purchases.purchasedate < 30 "
                              + "group by purchaseitem "
@@ -53,10 +62,11 @@ public class Purchase {
     private String lastname;
 
     @Column(name = "age")
-    private Long age;
+    private Byte age;
 
-    @Column(name = "purchaseitem")
-    private String purchaseItem;
+    @JoinColumn(name = "purchaseitem", referencedColumnName = "item_name")
+    @OneToOne
+    private Product purchaseItem;
 
     @Column(name = "count")
     private Long count;
@@ -64,13 +74,15 @@ public class Purchase {
     @Column(name = "amount")
     private Float amount;
 
+    @XmlElement(name = "purchasedate")
+    @XmlJavaTypeAdapter(DateAdapter.class)
     @Column(name = "purchasedate")
     private LocalDate purchaseDate;
 
     public Purchase() {
     }
 
-    public Purchase(Long id, String name, String lastname, Long age, String purchaseItem, Long count, Float amount, LocalDate purchaseDate) {
+    public Purchase(Long id, String name, String lastname, Byte age, Product purchaseItem, Long count, Float amount, LocalDate purchaseDate) {
         this.id = id;
         this.name = name;
         this.lastname = lastname;
@@ -93,11 +105,11 @@ public class Purchase {
         return lastname;
     }
 
-    public Long getAge() {
+    public Byte getAge() {
         return age;
     }
 
-    public String getPurchaseItem() {
+    public Product getPurchaseItem() {
         return purchaseItem;
     }
 
